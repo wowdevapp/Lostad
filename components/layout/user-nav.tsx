@@ -1,4 +1,6 @@
 'use client';
+import { useAppDispatch } from '@/app/store/reduxHooks';
+import { logout } from '@/app/store/features/authSlice';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,8 +13,26 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown, LogOut, Settings, ShieldAlert } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 export function UserNav() {
+
+
+
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  const signOut = async () => {
+    try {
+      await dispatch(logout()).unwrap();
+      // After successful logout, redirect to login page
+      router.push('/login');
+    } catch (error) {
+      // Handle any logout errors here
+      console.error('Logout failed:', error);
+      // Optionally show an error message to the user
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

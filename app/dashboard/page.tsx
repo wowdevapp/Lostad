@@ -4,7 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 export default function page() {
   return (
     <ScrollArea className="h-full">
-      <TabContainer />
+      dashboard
     </ScrollArea>
   );
 }

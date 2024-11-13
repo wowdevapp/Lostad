@@ -11,10 +11,10 @@ export const navItems: NavbarItem[] = [
         label: 'user'
       },
       {
-        title: 'P.P.E violations',
-        href: '/',
-        icon: 'mainiCon',
-        label: 'ppe'
+        title: 'My offers',
+        href: '/dashboard/my-offers',
+        icon: 'ShapesIcon',
+        label: 'offers'
       }
     ]
   },

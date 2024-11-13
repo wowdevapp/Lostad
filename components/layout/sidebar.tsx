@@ -3,8 +3,8 @@ import { DashboardNav } from '@/components/dashboard-nav';
 import { navItems } from '@/constants/data';
 import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
-import Logo2 from '@/public/expanded-logo.svg';
-import Logo from '@/public/logo.svg';
+import Logo2 from '@/public/logo.png';
+import Logo from '@/public/logo.png';
 import Image from 'next/image';
 
 type SidebarProps = {
@@ -23,9 +23,9 @@ export default function Sidebar({ className }: SidebarProps) {
       )}
     >
       <div className='flex flex-col h-full'>
-        <div className={cn('flex justify-center items-center py-2')}>
+        <div className={cn('flex justify-center items-center py-2 border-b')}>
           {
-            !isMinimized ? <Image className={`${isMinimized ? 'hidden h-0 w-0' : ''}`} src={Logo2} alt='logo' /> : <Image className={`${!isMinimized ? 'hidden h-0 w-0' : ''}`} src={Logo} alt='logo' />
+            !isMinimized ? <Image width={40} height={45} className={`${isMinimized ? 'hidden h-0 w-0' : ''}`} src={Logo2} alt='logo' /> : <Image width={40} height={40} className={`${!isMinimized ? 'hidden h-0 w-0' : ''}`} src={Logo} alt='logo' />
           }
         </div>
         <div className="flex-1 py-4 space-y-4">
