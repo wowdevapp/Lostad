@@ -1,0 +1,18 @@
+{
+    "auth": {
+        "head1": "Enter your email below to sign in to your account",
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "signOut": "Sign Out"
+    },
+    "nav": {
+        "home": "Home",
+        "dashboard": "Dashboard",
+        "profile": "Profile"
+    },
+    "common": {
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "success": "Success!"
+    }
+}

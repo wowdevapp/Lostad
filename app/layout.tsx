@@ -1,10 +1,9 @@
-import '@uploadthing/react/styles.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { ReduxProvider } from './store/ReduxProvider';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -17,12 +16,22 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
 
   return (
-    <html lang="en">
-      <body suppressHydrationWarning className={`${inter.className} overflow-hidden`}>
+    <html lang={locale}>
+      <body
+        suppressHydrationWarning
+        className={`${inter.className} overflow-hidden ${locale === 'ar' ? 'rtl text-right' : 'ltr text-left'}`}
+      >
         <ReduxProvider>
-          {children}
+          <NextIntlClientProvider messages={messages}>
+            <main>
+              {children}
+            </main>
+          </NextIntlClientProvider>
         </ReduxProvider>
       </body>
     </html>

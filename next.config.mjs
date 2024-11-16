@@ -1,5 +1,8 @@
-const withNextIntl = require('next-intl/plugin')();
+import createNextIntlPlugin from 'next-intl/plugin';
 
+const withNextIntl = createNextIntlPlugin();
+
+// next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -7,7 +10,6 @@ const nextConfig = {
   rewrites: async () => {
     return [];
   },
-  // Add CORS headers for development
   async headers() {
     return [
       {
@@ -23,5 +25,4 @@ const nextConfig = {
   },
 }
 
-// Wrap the existing config with withNextIntl
-module.exports = withNextIntl(nextConfig);
+export default withNextIntl(nextConfig);

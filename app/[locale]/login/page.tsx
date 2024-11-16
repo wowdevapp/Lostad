@@ -19,8 +19,10 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { useAppDispatch, useAppSelector } from "../store/reduxHooks";
-import { loginProfessor } from "../store/features/authSlice";
+import { useAppDispatch, useAppSelector } from "@/app/store/reduxHooks";
+import { loginProfessor } from "@/app/store/features/authSlice";
+import { useTranslations } from "next-intl";
+
 
 // Validation schema
 const loginSchema = z.object({
@@ -44,6 +46,8 @@ export default function LoginPage() {
     const dispatch = useAppDispatch()
     const router = useRouter()
     const { isLoading, error, user } = useAppSelector((state: any) => state.auth)
+
+    const t = useTranslations('auth');
 
     // Initialize form
     const form = useForm<LoginFormValues>({
@@ -86,7 +90,7 @@ export default function LoginPage() {
                     <div className="grid gap-2 text-center">
                         <h1 className="text-3xl font-bold">Login</h1>
                         <p className="text-balance text-muted-foreground">
-                            Enter your email below to login to your account
+                            {t('head1')}
                         </p>
                     </div>
 

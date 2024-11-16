@@ -1,0 +1,18 @@
+{
+    "auth": {
+        "head1": "Entrez votre adresse e-mail ci-dessous pour vous connecter à votre compte",
+        "signIn": "Se connecter",
+        "signUp": "S'inscrire",
+        "signOut": "Se déconnecter"
+    },
+    "nav": {
+        "home": "Accueil",
+        "dashboard": "Tableau de bord",
+        "profile": "Profil"
+    },
+    "common": {
+        "loading": "Chargement...",
+        "error": "Une erreur est survenue",
+        "success": "Succès !"
+    }
+}

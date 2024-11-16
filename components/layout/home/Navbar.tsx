@@ -7,7 +7,7 @@ type Props = {}
 function Navbar({ }: Props) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     return (
-        <nav className="sticky bg-white shadow-sm">
+        <nav className="sticky z-50 w-full bg-white shadow-sm">
             <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
