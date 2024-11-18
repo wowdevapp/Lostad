@@ -1,13 +1,13 @@
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import Breadcrumb from '@/components/Breadcrumb';
 import Header from '@/components/layout/header';
 import Sidebar from '@/components/layout/sidebar';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { useLocale } from 'next-intl';
 
 export const metadata: Metadata = {
   title: 'Lostad',
-  description: 'Dashboard test for frontend developer position',
+  description: 'Dashboard',
 };
 
 export default function DashboardLayout({
@@ -15,32 +15,18 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const locale = useLocale();
+
   return (
     <ProtectedRoute>
-      <div className="flex h-screen overflow-hidden">
+      <div className={`flex h-screen overflow-hidden ${locale === 'ar' ? 'rtl text-right' : 'ltr text-left'}`}>
         <Sidebar />
         <main className="flex-1 overflow-hidden bg-[#F2F2F2]">
           <Header />
-          <Breadcrumb className="hidden md:flex">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="#">Dashboard</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="#">Orders</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Recent Orders</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-          {children}
+          <div className='p-4'>
+            <Breadcrumb />
+            {children}
+          </div>
         </main>
       </div>
     </ProtectedRoute>

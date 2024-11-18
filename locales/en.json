@@ -1,4 +1,18 @@
 {
+    "navbar": {
+        "signin": "Sign In",
+        "become": "Become a Tutor",
+        "how": "How it works",
+        "subject": "Subject",
+        "findTutor": "Find a Tutor"
+    },
+    "home": {
+        "title1": "Find Your Perfect",
+        "title2": "Private Tutor",
+        "desc": "Connect with experienced tutors for personalized learning. Choose from thousands of teachers and improve your skills today.",
+        "search": "Search",
+        "searchPlaceholder": "What would you like to learn?"
+    },
     "auth": {
         "head1": "Enter your email below to sign in to your account",
         "signIn": "Sign In",
@@ -10,9 +24,50 @@
         "dashboard": "Dashboard",
         "profile": "Profile"
     },
-    "common": {
-        "loading": "Loading...",
-        "error": "An error occurred",
-        "success": "Success!"
+    "signup": {
+        "create_account": "Create Your Account",
+        "join_community": "Join our community of professional educators",
+        "full_name": "Full Name",
+        "enter_name": "Enter your full name",
+        "email": "Email Address",
+        "enter_email": "Enter your email",
+        "password": "Password",
+        "create_password": "Create password",
+        "confirm_password": "Confirm Password",
+        "confirm_password_placeholder": "Confirm password",
+        "phone": "Phone Number",
+        "enter_phone": "Enter phone number",
+        "city": "City",
+        "enter_city": "Enter your city",
+        "role": {
+            "professor": "Professor",
+            "student": "Student"
+        },
+        "professor_fields": {
+            "languages": "Spoken Languages",
+            "select_languages": "Select languages...",
+            "categories": "Teaching Categories",
+            "select_categories": "Select categories...",
+            "description": "Professional Description",
+            "description_placeholder": "Tell us about your teaching experience..."
+        },
+        "button": {
+            "create": "Create Account"
+        },
+        "validation": {
+            "required": "This field is required",
+            "select_role": "Please select a role",
+            "invalid_email": "Invalid email address",
+            "password_requirements": {
+                "min": "Password must be at least 8 characters",
+                "uppercase": "Password must contain at least one uppercase letter",
+                "lowercase": "Password must contain at least one lowercase letter",
+                "number": "Password must contain at least one number"
+            },
+            "password_match": "Passwords don't match",
+            "select_language": "Select at least one language",
+            "select_category": "Select at least one category",
+            "description_length": "Description must be at least 20 characters"
+        }
     }
 }

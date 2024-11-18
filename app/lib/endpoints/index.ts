@@ -1,4 +1,6 @@
+import { category } from './data/categroy';
 import { authProf } from './prof/authProf';
 export default {
-  authProf: authProf
+  authProf: authProf,
+  category: category
 };

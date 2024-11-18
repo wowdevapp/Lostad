@@ -1,18 +1,65 @@
 {
+    "home": {
+        "title1": "",
+        "title2": "Private Tutor",
+        "desc": "Connect with experienced tutors for personalized learning. Choose from thousands of teachers and improve your skills today.",
+        "Search": "Search"
+    },
     "auth": {
-        "head1": "Entrez votre adresse e-mail ci-dessous pour vous connecter à votre compte",
-        "signIn": "Se connecter",
-        "signUp": "S'inscrire",
-        "signOut": "Se déconnecter"
+        "head1": "Enter your email below to sign in to your account",
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "signOut": "Sign Out"
     },
     "nav": {
-        "home": "Accueil",
-        "dashboard": "Tableau de bord",
-        "profile": "Profil"
+        "home": "Home",
+        "dashboard": "Dashboard",
+        "profile": "Profile"
     },
-    "common": {
-        "loading": "Chargement...",
-        "error": "Une erreur est survenue",
-        "success": "Succès !"
+    "signup": {
+        "create_account": "Créez Votre Compte",
+        "join_community": "Rejoignez notre communauté d'éducateurs professionnels",
+        "full_name": "Nom Complet",
+        "enter_name": "Entrez votre nom complet",
+        "email": "Adresse Email",
+        "enter_email": "Entrez votre email",
+        "password": "Mot de passe",
+        "create_password": "Créez un mot de passe",
+        "confirm_password": "Confirmez le Mot de Passe",
+        "confirm_password_placeholder": "Confirmez le mot de passe",
+        "phone": "Numéro de Téléphone",
+        "enter_phone": "Entrez votre numéro de téléphone",
+        "city": "Ville",
+        "enter_city": "Entrez votre ville",
+        "role": {
+            "professor": "Professeur",
+            "student": "Étudiant"
+        },
+        "professor_fields": {
+            "languages": "Langues Parlées",
+            "select_languages": "Sélectionnez les langues...",
+            "categories": "Catégories d'Enseignement",
+            "select_categories": "Sélectionnez les catégories...",
+            "description": "Description Professionnelle",
+            "description_placeholder": "Parlez-nous de votre expérience d'enseignement..."
+        },
+        "button": {
+            "create": "Créer un Compte"
+        },
+        "validation": {
+            "required": "Ce champ est obligatoire",
+            "select_role": "Veuillez sélectionner un rôle",
+            "invalid_email": "Adresse email invalide",
+            "password_requirements": {
+                "min": "Le mot de passe doit contenir au moins 8 caractères",
+                "uppercase": "Le mot de passe doit contenir au moins une majuscule",
+                "lowercase": "Le mot de passe doit contenir au moins une minuscule",
+                "number": "Le mot de passe doit contenir au moins un chiffre"
+            },
+            "password_match": "Les mots de passe ne correspondent pas",
+            "select_language": "Sélectionnez au moins une langue",
+            "select_category": "Sélectionnez au moins une catégorie",
+            "description_length": "La description doit contenir au moins 20 caractères"
+        }
     }
 }

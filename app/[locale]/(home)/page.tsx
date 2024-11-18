@@ -2,9 +2,13 @@
 'use client';
 
 import { Search } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 
 export default function Home() {
+
+    const t = useTranslations('home');
+    const locale = useLocale();
     return (
         <>
             <div className="relative w-full bg-white h-screen-nav">
@@ -12,11 +16,11 @@ export default function Home() {
                     <div className="flex flex-col items-center justify-between h-full gap-12 lg:flex-row">
                         <div className="lg:w-1/2">
                             <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-                                <span className="block">Find Your Perfect</span>
-                                <span className="block text-blue-600">Private Tutor</span>
+                                <span className="block">{t('title1')}</span>
+                                <span className="block text-blue-600">{t('title2')}</span>
                             </h1>
                             <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl md:mt-5 md:text-xl">
-                                Connect with experienced tutors for personalized learning. Choose from thousands of teachers and improve your skills today.
+                                {t('desc')}
                             </p>
                             <div className="mt-8">
                                 <div className="relative max-w-xl">
@@ -25,10 +29,10 @@ export default function Home() {
                                         <input
                                             type="text"
                                             className="w-full py-2 pl-3 pr-10 text-gray-900 placeholder-gray-500 border-none focus:outline-none"
-                                            placeholder="What would you like to learn?"
+                                            placeholder={t('searchPlaceholder')}
                                         />
-                                        <button className="absolute px-4 py-2 text-white bg-blue-600 rounded-lg right-2 hover:bg-blue-700">
-                                            Search
+                                        <button className={`"absolute px-4 py-2 text-white bg-blue-600 rounded-lg right-2 hover:bg-blue-700" ${locale === 'ar' ? "left-2" : "right-2"}`}>
+                                            {t('search')}
                                         </button>
                                     </div>
                                 </div>

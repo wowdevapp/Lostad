@@ -1,11 +1,5 @@
 
 import Navbar from '@/components/layout/home/Navbar';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-    title: 'Losstad',
-    description: 'Hello welcome to Losstad',
-};
 
 export default function LocaleLayout({
     children

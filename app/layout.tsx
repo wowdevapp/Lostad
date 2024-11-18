@@ -7,8 +7,8 @@ import { getLocale, getMessages } from 'next-intl/server';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'Losstad',
+  description: 'Losstad is a platform where you can find your instructor.',
 };
 
 export default async function RootLayout({
@@ -19,12 +19,11 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
 
-
   return (
-    <html lang={locale}>
+    <html dir={`${locale === 'ar' ? 'rtl' : 'ltr'}`} lang={locale}>
       <body
         suppressHydrationWarning
-        className={`${inter.className} overflow-hidden ${locale === 'ar' ? 'rtl text-right' : 'ltr text-left'}`}
+        className={`${inter.className} overflow-hidden ${locale === 'ar' ? 'text-right' : 'text-left'}`}
       >
         <ReduxProvider>
           <NextIntlClientProvider messages={messages}>

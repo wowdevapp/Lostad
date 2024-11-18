@@ -1,7 +1,5 @@
 // lib/axios.ts
 import axios from 'axios';
-import { store } from '../store/store';
-import { logout } from '../store/features/authSlice';
 import Cookies from 'js-cookie';
 
 // Create axios instance with custom config

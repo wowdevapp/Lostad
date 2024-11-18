@@ -3,8 +3,7 @@ import Cookies from 'js-cookie';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
-    title: 'Frontend Test',
-    description: 'Dashboard test for frontend developer position',
+    title: 'Losstad/ Login',
 };
 
 export default function AuthLayout({

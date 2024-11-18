@@ -1,11 +1,16 @@
+/* eslint-disable no-console */
 'use client'
+import { Link } from '@/i18n/routing';
 import { Menu, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import React, { useState } from 'react'
 
 type Props = {}
 
 function Navbar({ }: Props) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const t = useTranslations('navbar');
     return (
         <nav className="sticky z-50 w-full bg-white shadow-sm">
             <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -15,16 +20,22 @@ function Navbar({ }: Props) {
                     </div>
 
                     {/* Desktop Navigation */}
-                    <div className="items-center hidden space-x-8 md:flex">
-                        <a className="text-gray-600 hover:text-blue-600" href="#find">Find Tutors</a>
-                        <a className="text-gray-600 hover:text-blue-600" href="#subjects">Subjects</a>
-                        <a className="text-gray-600 hover:text-blue-600" href="#how">How it Works</a>
-                        <button className="px-4 py-2 text-gray-600 hover:text-blue-600">
-                            Become a Tutor
+                    <div className="items-center justify-start hidden gap-6 md:flex">
+                        <a className="text-gray-600 hover:text-blue-600" href="#find">
+                            {t('findTutor')}
+                        </a>
+                        <a className="text-gray-600 hover:text-blue-600" href="#subjects">
+                            {t('subject')}
+                        </a>
+                        <a className="text-gray-600 hover:text-blue-600" href="#how">
+                            {t('how')}
+                        </a>
+                        <button className="py-2 text-gray-600 hover:text-blue-600">
+                            {t('become')}
                         </button>
-                        <button className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">
-                            Sign In
-                        </button>
+                        <Link href={"/login"} className="px-4 py-2 text-left text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                            {t('signin')}
+                        </Link>
                     </div>
 
                     {/* Mobile menu button */}
@@ -44,20 +55,20 @@ function Navbar({ }: Props) {
                 <div className="md:hidden">
                     <div className="pt-2 pb-3 space-y-1">
                         <a className="block px-4 py-2 text-gray-600 hover:bg-blue-50" href="#find">
-                            Find Tutors
+                            {t('findTutor')}
                         </a>
                         <a className="block px-4 py-2 text-gray-600 hover:bg-blue-50" href="#subjects">
-                            Subjects
+                            {t('subject')}
                         </a>
                         <a className="block px-4 py-2 text-gray-600 hover:bg-blue-50" href="#how">
-                            How it Works
+                            {t('how')}
                         </a>
                         <button className="block w-full px-4 py-2 text-left text-gray-600 hover:bg-blue-50">
-                            Become a Tutor
+                            {t('become')}
                         </button>
-                        <button className="block w-full px-4 py-2 text-left text-gray-600 hover:bg-blue-50">
-                            Sign In
-                        </button>
+                        <Link href='/login' onClick={(e) => console.log(e)} className="block w-full px-4 py-2 text-left text-gray-600 hover:bg-blue-50">
+                            {t('signin')}
+                        </Link>
                     </div>
                 </div>
             )}

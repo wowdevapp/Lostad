@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { apiClient } from '@/app/lib/axios';
 import endpoints from '@/app/lib/endpoints';
 import Cookies from 'js-cookie';
+import { RootState } from '../store';
 
 // Types
 export interface LoginCredentials {

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Frontend Test',
-    description: 'Dashboard test for frontend developer position',
+    title: 'Losstad/ Signup',
+    description: 'Sign up to Losstad',
 };
 
 export default function AuthLayout({

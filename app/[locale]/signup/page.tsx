@@ -1,11 +1,14 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Eye, EyeOff, Phone, MapPin } from 'lucide-react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Select from 'react-select';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useAppDispatch, useAppSelector } from '@/app/store/reduxHooks';
+import { Category, fetchCategories } from '@/app/store/features/categorySlice';
+import { useLocale, useTranslations } from 'next-intl';
 // Form validation schema with Yup
 const signupSchema = yup.object().shape({
     role: yup.string().required('Please select a role'),
@@ -113,11 +116,16 @@ const SignupForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isProfessor, setIsProfessor] = useState(false)
+    const t = useTranslations('signup');
+    const locale = useLocale();
+
+    const { categories } = useAppSelector((state) => state.category);
+
+    const dispatch = useAppDispatch();
 
     const {
         handleSubmit,
         control,
-        setValue,
         formState: { errors, isDirty, isValid },
     } = useForm<FormData>({
         resolver: yupResolver(signupSchema),
@@ -142,17 +150,18 @@ const SignupForm = () => {
         'Chinese', 'Japanese', 'Arabic', 'Russian', 'Portuguese'
     ].map(lang => ({ label: lang, value: lang.toLowerCase() }));
 
-    const categoryOptions = [
-        { label: 'Mathematics', value: '1' },
-        { label: 'Science', value: '2' },
-        { label: 'Languages', value: '3' },
-        { label: 'Arts', value: '4' },
-        { label: 'Technology', value: '5' }
-    ];
+    const categoryOptions = categories.map((category: Category) => ({
+        label: category.name,
+        value: category.id
+    }));
 
     const onSubmit = (data: FormData) => {
         console.log('Form submitted:', data);
     };
+
+    useEffect(() => {
+        dispatch(fetchCategories());
+    }, []);
 
     return (
         <div className="flex min-h-screen">
@@ -162,11 +171,11 @@ const SignupForm = () => {
                     <div className="flex items-center justify-center h-screen p-4 ">
                         <div className="w-full max-w-[500px] space-y-4 py-6">
                             <div className="space-y-1 text-center">
-                                <h1 className="text-2xl font-bold text-purple-800">
-                                    Create Your Account
+                                <h1 className="text-2xl font-bold text-blue-600">
+                                    {t('create_account')}
                                 </h1>
                                 <p className="text-sm text-gray-600">
-                                    Join our community of professional educators
+                                    {t('join_community')}
                                 </p>
                             </div>
 
@@ -176,7 +185,7 @@ const SignupForm = () => {
                                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                                         <div>
                                             <label className="block mb-1 text-xs font-medium text-gray-700">
-                                                Full Name
+                                                {t('full_name')}
                                             </label>
                                             <Controller
                                                 name="name"
@@ -185,8 +194,8 @@ const SignupForm = () => {
                                                     <input
                                                         {...field}
                                                         type="text"
-                                                        className="w-full px-3 py-2 text-sm border rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-                                                        placeholder="Enter your full name"
+                                                        className={`${locale === 'ar' ? 'text-right' : 'text-left'} w-full px-3 py-2 text-sm border rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200`}
+                                                        placeholder={t("enter_name")}
                                                     />
                                                 )}
                                             />
@@ -198,7 +207,7 @@ const SignupForm = () => {
                                         </div>
                                         <div>
                                             <label className="block mb-1 text-xs font-medium text-gray-700">
-                                                Email Address
+                                                {t('email')}
                                             </label>
                                             <Controller
                                                 name="email"
@@ -207,8 +216,8 @@ const SignupForm = () => {
                                                     <input
                                                         {...field}
                                                         type="email"
-                                                        className="w-full px-3 py-2 text-sm border rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-                                                        placeholder="Enter your email"
+                                                        className={`${locale === 'ar' ? 'text-right' : 'text-left'} w-full px-3 py-2 text-sm border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200`}
+                                                        placeholder={t("enter_email")}
                                                     />
                                                 )}
                                             />
@@ -224,9 +233,9 @@ const SignupForm = () => {
                                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                                         <div>
                                             <label className="block mb-1 text-xs font-medium text-gray-700">
-                                                Password
+                                                {t("password")}
                                             </label>
-                                            <div className="relative">
+                                            <div className={`${locale === 'ar' ? 'text-right' : 'text-left'} relative`}>
                                                 <Controller
                                                     name="password"
                                                     control={control}
@@ -234,15 +243,15 @@ const SignupForm = () => {
                                                         <input
                                                             {...field}
                                                             type={showPassword ? 'text' : 'password'}
-                                                            className="w-full px-3 py-2 text-sm border rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-                                                            placeholder="Create password"
+                                                            className={`${locale === 'ar' ? 'text-right' : 'text-left'} w-full px-3 py-2 text-sm border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200`}
+                                                            placeholder={t("create_password")}
                                                         />
                                                     )}
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => setShowPassword(!showPassword)}
-                                                    className="absolute text-gray-400 right-2 top-2.5 hover:text-gray-600"
+                                                    className={`absolute text-gray-400 top-3 hover:text-gray-600 ${locale === 'ar' ? 'left-3' : 'right-3'}`}
                                                 >
                                                     {showPassword ? (
                                                         <EyeOff className="w-4 h-4" />
@@ -259,7 +268,7 @@ const SignupForm = () => {
                                         </div>
                                         <div>
                                             <label className="block mb-1 text-xs font-medium text-gray-700">
-                                                Confirm Password
+                                                {t("confirm_password")}
                                             </label>
                                             <div className="relative">
                                                 <Controller
@@ -269,21 +278,21 @@ const SignupForm = () => {
                                                         <input
                                                             {...field}
                                                             type={showConfirmPassword ? 'text' : 'password'}
-                                                            className={`w-full px-3 py-2 text-sm border rounded-lg  ${errors.password_confirmation ? 'border-red-500' : 'border-gray-200'
-                                                                } focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all`}
-                                                            placeholder="Confirm password"
+                                                            className={`${locale === 'ar' ? 'text-right' : 'text-left'} w-full px-3 py-2 text-sm border rounded-lg  ${errors.password_confirmation ? 'border-red-500' : 'border-gray-200'
+                                                                } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all`}
+                                                            placeholder={t("confirm_password_placeholder")}
                                                         />
                                                     )}
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                    className="absolute text-gray-400 right-3 top-3 hover:text-gray-600"
+                                                    className={`absolute text-gray-400 top-3 hover:text-gray-600 ${locale === 'ar' ? 'left-3' : 'right-3'}`}
                                                 >
                                                     {showConfirmPassword ? (
-                                                        <EyeOff className="w-5 h-5" />
+                                                        <EyeOff className="w-4 h-4" />
                                                     ) : (
-                                                        <Eye className="w-5 h-5" />
+                                                        <Eye className="w-4 h-4" />
                                                     )}
                                                 </button>
                                             </div>
@@ -299,7 +308,7 @@ const SignupForm = () => {
                                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                                         <div>
                                             <label className="block mb-1 text-xs font-medium text-gray-700">
-                                                Phone Number
+                                                {t("phone")}
                                             </label>
                                             <div className="relative">
                                                 <Phone className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
@@ -310,8 +319,8 @@ const SignupForm = () => {
                                                         <input
                                                             {...field}
                                                             type="tel"
-                                                            className="w-full py-2 pr-3 text-sm border rounded-lg pl-9 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-                                                            placeholder="Enter phone number"
+                                                            className={`${locale === 'ar' ? 'text-right' : 'text-left'} w-full py-2 pr-3 text-sm border rounded-lg pl-9 focus:border-blue-500 focus:ring-2 focus:ring-blue-200`}
+                                                            placeholder={t("enter_phone")}
                                                         />
                                                     )}
                                                 />
@@ -319,7 +328,7 @@ const SignupForm = () => {
                                         </div>
                                         <div>
                                             <label className="block mb-1 text-xs font-medium text-gray-700">
-                                                City
+                                                {t("city")}
                                             </label>
                                             <div className="relative">
                                                 <MapPin className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" />
@@ -330,8 +339,8 @@ const SignupForm = () => {
                                                         <input
                                                             {...field}
                                                             type="text"
-                                                            className="w-full py-2 pr-3 text-sm border rounded-lg pl-9 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-                                                            placeholder="Enter your city"
+                                                            className={`${locale === 'ar' ? 'text-right' : 'text-left'} w-full py-2 pr-3 text-sm border rounded-lg pl-9 focus:border-blue-500 focus:ring-2 focus:ring-blue-200`}
+                                                            placeholder={t("enter_city")}
                                                         />
                                                     )}
                                                 />
@@ -356,9 +365,9 @@ const SignupForm = () => {
                                                                     field.onChange(e.target.value)
                                                                     setIsProfessor(true)
                                                                 }}
-                                                                className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                                                                className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                                             />
-                                                            <span className="text-sm text-gray-700">Professor</span>
+                                                            <span className="text-sm text-gray-700">{t("role.professor")}</span>
                                                         </label>
                                                         <label className="flex items-center space-x-2">
                                                             <input
@@ -369,9 +378,9 @@ const SignupForm = () => {
                                                                     field.onChange(e.target.value)
                                                                     setIsProfessor(false)
                                                                 }}
-                                                                className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                                                                className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                                             />
-                                                            <span className="text-sm text-gray-700">Student</span>
+                                                            <span className="text-sm text-gray-700">{t("role.student")}</span>
                                                         </label>
                                                     </>
                                                 )}
@@ -388,7 +397,7 @@ const SignupForm = () => {
                                             <div className="space-y-3">
                                                 <div>
                                                     <label className="block mb-1 text-xs font-medium text-gray-700">
-                                                        Spoken Languages
+                                                        {t("professor_fields.languages")}
                                                     </label>
                                                     <Controller
                                                         name="languages"
@@ -405,7 +414,7 @@ const SignupForm = () => {
                                                                 onChange={(selectedOptions) => {
                                                                     field.onChange(selectedOptions || []);
                                                                 }}
-                                                                placeholder="Select languages..."
+                                                                placeholder={t("professor_fields.select_languages")}
                                                             />
                                                         )}
                                                     />
@@ -415,7 +424,7 @@ const SignupForm = () => {
                                                 </div>
                                                 <div>
                                                     <label className="block mb-1 text-xs font-medium text-gray-700">
-                                                        Teaching Categories
+                                                        {t("professor_fields.categories")}
                                                     </label>
                                                     <Controller
                                                         name="categories"
@@ -432,7 +441,7 @@ const SignupForm = () => {
                                                                 }}
                                                                 styles={selectStyles}
                                                                 className="text-sm"
-                                                                placeholder="Select categories..."
+                                                                placeholder={t("professor_fields.select_categories")}
                                                             />
                                                         )}
                                                     />
@@ -442,7 +451,7 @@ const SignupForm = () => {
                                                 </div>
                                                 <div>
                                                     <label className="block mb-1 text-xs font-medium text-gray-700">
-                                                        Professional Description
+                                                        {t("professor_fields.description")}
                                                     </label>
                                                     <Controller
                                                         name="description"
@@ -451,8 +460,8 @@ const SignupForm = () => {
                                                             <textarea
                                                                 {...field}
                                                                 rows={3}
-                                                                className="w-full px-3 py-2 text-sm border rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-                                                                placeholder="Tell us about your teaching experience..."
+                                                                className={`${locale === 'ar' ? 'text-right' : 'text-left'} w-full px-3 py-2 text-sm border rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200`}
+                                                                placeholder={t("professor_fields.description_placeholder")}
                                                             />
                                                         )}
                                                     />
@@ -465,9 +474,9 @@ const SignupForm = () => {
                                 <button
                                     type="submit"
                                     disabled={!isDirty || !isValid}
-                                    className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm text-white transition-all bg-purple-700 rounded-lg hover:bg-purple-800"
+                                    className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm text-white transition-all bg-blue-700 rounded-lg hover:bg-blue-800"
                                 >
-                                    Create Account
+                                    {t("button.create")}
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         className="w-4 h-4"
@@ -488,9 +497,9 @@ const SignupForm = () => {
             </div>
 
             {/* Image Section */}
-            <div className="hidden w-1/2 bg-purple-100 lg:block">
+            <div className="hidden w-1/2 bg-blue-100 lg:block">
                 <img
-                    src="/api/placeholder/1200/1600"
+                    src="/img/hero01.jpg"
                     alt="Sign up"
                     className="object-cover w-full h-full"
                 />
