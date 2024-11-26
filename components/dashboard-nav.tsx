@@ -12,6 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip';
+import { useLocale, useTranslations } from 'next-intl';
 
 interface DashboardNavProps {
   items: NavbarItem[];
@@ -34,6 +35,9 @@ const NavItem = ({
   onNavClick: () => void;
 }) => {
   const Icon = Icons[item.icon || 'arrowRight'];
+  const t = useTranslations('sidebar');
+  const locale = useLocale();
+
   if (!item.href) return null;
 
   return (
@@ -42,7 +46,7 @@ const NavItem = ({
         <Link
           href={item.disabled ? '/' : item.href}
           className={cn(
-            'flex my-1 items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+            'flex my-1 items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium text-[#C4C4C4] hover:bg-blue-400 hover:text-white',
             path === item.href ? 'bg-blue-600' : 'transparent',
             item.disabled && 'cursor-not-allowed opacity-80'
           )}
@@ -50,18 +54,19 @@ const NavItem = ({
         >
           <Icon
             className={cn(
-              'ml-3 size-5',
-              path === item.href ? 'text-white' : 'text-[#C4C4C4]'
+              'size-5',
+              path === item.href ? 'text-white' : '',
+              locale === 'ar' ? 'mr-3' : 'ml-3'
             )}
           />
           {(isMobileNav || (!isMinimized && !isMobileNav)) && (
             <span
               className={cn(
                 "mr-2 truncate",
-                path === item.href ? 'text-white' : 'text-[#C4C4C4]'
+                path === item.href ? 'text-white' : ' hover:text-white',
               )}
             >
-              {item.title}
+              {t(item.title)}
             </span>
           )}
         </Link>
@@ -87,17 +92,18 @@ const NavGroup = ({
   isMinimized,
   children
 }: {
-  group: string;
+  group: string | null;
   isMinimized: boolean;
   children: React.ReactNode;
 }) => {
+  const t = useTranslations('sidebar');
   return (
     <div className="nav-group">
       {isMinimized ? (
         <hr />
       ) : (
         <div className="text-sm my-2 font-light text-[#C4C4C4] uppercase pl-3">
-          {group}
+          {group ? t(group) : ''}
         </div>
       )}
       <div className="pl-1">
@@ -126,9 +132,9 @@ export function DashboardNav({
   return (
     <nav className="grid items-start gap-2">
       <TooltipProvider>
-        {items.map((navGroup) => {
+        {items.map((navGroup, GroupIndex) => {
           // Create unique key for each group using group name or index
-          const groupKey = `nav-group-${navGroup.group || 'default'}`;
+          const groupKey = `nav-group-${navGroup.group || GroupIndex}`;
 
           return (
             <NavGroup
@@ -160,6 +166,11 @@ export function DashboardNav({
 }
 
 // Add type for NavbarItem if not already defined
+
+interface NavbarItem {
+  group: string | null;
+  childs: NavbarItemChild[];
+}
 interface NavbarItemChild {
   href?: string;
   title: string;
@@ -168,6 +179,6 @@ interface NavbarItemChild {
 }
 
 interface NavbarItem {
-  group: string;
+  group: string | null;
   childs: NavbarItemChild[];
 }

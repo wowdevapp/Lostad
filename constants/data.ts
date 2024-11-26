@@ -5,34 +5,34 @@ export const navItems: NavbarItem[] = [
     group: null,
     childs: [
       {
-        title: 'Dashboard',
+        title: 'dashboard',
         href: '/dashboard',
         icon: 'dashboard',
         label: 'user'
-      },
-      {
-        title: 'My offers',
-        href: '/dashboard/my-offers',
-        icon: 'ShapesIcon',
-        label: 'offers'
       }
     ]
   },
   {
-    group: 'MANAGE',
+    group: null,
     childs: [
       {
-        title: 'P.P.Es',
-        href: '/ppes',
-        icon: 'hands',
-        label: 'PPES'
+        title: 'myclasses',
+        href: '/dashboard/my-classes',
+        icon: 'Presentation',
+        label: 'Classes'
       },
       {
-        title: 'Contractors',
-        href: '/dashboard/user',
-        icon: 'contractor',
-        label: 'contractors'
+        title: 'profile',
+        href: '/dashboard/profile',
+        icon: 'UserRoundCog',
+        label: 'Profile'
+      },
+      {
+        title: 'settings',
+        href: '/dashboard/settings',
+        icon: 'Settings',
+        label: 'Settings'
       }
     ]
   }
-];
+] as const;

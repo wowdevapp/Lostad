@@ -8,7 +8,7 @@ export interface Category {
 }
 
 export interface CategroyState {
-  categories: Category[] | [];
+  categories: Category[] | unknown;
   isLoading: boolean;
 }
 

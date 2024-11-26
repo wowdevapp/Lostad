@@ -24,6 +24,16 @@
         "dashboard": "لوحة التحكم",
         "profile": "الملف الشخصي"
     },
+    "sidebar": {
+        "manage": "إدارة",
+        "dashboard": "لوحة التحكم",
+        "myclasses": "أقسامي",
+        "profile": "الملف الشخصي",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج",
+        "footer1": "@ ا 2021 ايدوميت",
+        "footer2": "لوريم إيبسوم دولور سيت أميت، كونسيكتيتور أديبيسينغ إليت، سيد دو إيوسمود تيمبور إنكيديديونت يوت."
+    },
     "signup": {
         "create_account": "إنشاء حسابك",
         "join_community": "انضم إلى مجتمعنا من المعلمين المحترفين",
@@ -52,7 +62,8 @@
             "description_placeholder": "أخبرنا عن خبرتك في التدريس..."
         },
         "button": {
-            "create": "إنشاء حساب"
+            "create": "إنشاء حساب",
+            "loading": "جار التحميل"
         },
         "validation": {
             "required": "هذا الحقل مطلوب",
@@ -68,6 +79,10 @@
             "select_language": "اختر لغة واحدة على الأقل",
             "select_category": "اختر فئة واحدة على الأقل",
             "description_length": "يجب أن يحتوي الوصف على 20 حرفًا على الأقل"
+        },
+        "messages": {
+            "error_professor_register": "حدت خطأ في تسجيل الأستاذ",
+            "create_prof_success": "تم إنشاء حساب الأستاذ بنجاح"
         }
     }
 }

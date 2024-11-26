@@ -19,6 +19,7 @@ module.exports = {
     extend: {
       height: {
         'screen-nav': 'calc(100vh - 64px)',
+        'dashboard-content': 'calc(100vh - 130px)'
       },
       colors: {
         border: 'hsl(var(--border))',

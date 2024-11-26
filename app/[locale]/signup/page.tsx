@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Eye, EyeOff, Phone, MapPin } from 'lucide-react';
+import { Eye, EyeOff, Phone, MapPin, Loader2 } from 'lucide-react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Select from 'react-select';
@@ -9,6 +9,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppDispatch, useAppSelector } from '@/app/store/reduxHooks';
 import { Category, fetchCategories } from '@/app/store/features/categorySlice';
 import { useLocale, useTranslations } from 'next-intl';
+import { Button } from '@/components/ui/button';
+import { clearError, registerProf } from '@/app/store/features/authSlice';
+import { toast } from 'sonner';
+import { useToast } from '@/hooks/useToastServic';
+import { useRouter } from '@/i18n/routing';
+
+
 // Form validation schema with Yup
 const signupSchema = yup.object().shape({
     role: yup.string().required('Please select a role'),
@@ -60,6 +67,18 @@ const signupSchema = yup.object().shape({
 
 // TypeScript type for form data based on Yup schema
 type FormData = yup.InferType<typeof signupSchema>;
+
+export interface TransformedData {
+    name: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+    spoken_languages?: string[];
+    phone: string;
+    city: string;
+    categories?: string[];
+    description?: string;
+}
 
 // Custom styles for React Select
 const selectStyles = {
@@ -120,8 +139,10 @@ const SignupForm = () => {
     const locale = useLocale();
 
     const { categories } = useAppSelector((state) => state.category);
+    const { isLoading, error, token } = useAppSelector((state) => state.auth);
 
     const dispatch = useAppDispatch();
+    const router = useRouter();
 
     const {
         handleSubmit,
@@ -155,19 +176,73 @@ const SignupForm = () => {
         value: category.id
     }));
 
-    const onSubmit = (data: FormData) => {
-        console.log('Form submitted:', data);
-    };
+
+    const onSubmit = async (data: FormData) => {
+        const transformedData: TransformedData = {
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            password_confirmation: data.password_confirmation,
+            spoken_languages: data?.languages?.map(lang => lang.label),
+            phone: data.phone,
+            city: data.city,
+            categories: data?.categories?.map(cat => cat.value),
+            description: data.description
+        };
+
+        const result = await dispatch(registerProf(transformedData));
+        if (registerProf.fulfilled.match(result)) {
+            toast.success(t('messages.create_prof_success'), {
+                position: 'top-right',
+                richColors: true
+            });
+            router.push('/dashboard')
+            router.refresh()
+        }
+
+        if (registerProf.rejected.match(result)) {
+            toast.error(t(`messages.error_professor_register`), {
+                position: 'top-right',
+                richColors: true
+            });
+        }
+
+    }
 
     useEffect(() => {
         dispatch(fetchCategories());
     }, []);
+
+
+    /* useEffect(() => {
+        dispatch(clearError())
+        if (error) {
+            toast.error(t(`messages.${error}`), {
+                position: 'top-right',
+                richColors: true
+            });
+        }
+        () => {
+            dispatch(clearError())
+        }
+    }, [error, dispatch]); */
 
     return (
         <div className="flex min-h-screen">
             {/* Form Section */}
             <div className="flex-1 bg-white">
                 <ScrollArea className="h-screen">
+                    {/* {
+                        error && (
+                            <Alert variant="destructive">
+                                <AlertCircle className="w-4 h-4" />
+                                <AlertTitle>Error</AlertTitle>
+                                <AlertDescription>
+                                    {error}
+                                </AlertDescription>
+                            </Alert>
+                        )
+                    } */}
                     <div className="flex items-center justify-center h-screen p-4 ">
                         <div className="w-full max-w-[500px] space-y-4 py-6">
                             <div className="space-y-1 text-center">
@@ -471,25 +546,34 @@ const SignupForm = () => {
                                     )}
                                 </div>
 
-                                <button
+                                <Button
                                     type="submit"
-                                    disabled={!isDirty || !isValid}
+                                    disabled={!isDirty || !isValid || isLoading}
                                     className="flex items-center justify-center w-full gap-2 px-4 py-2 text-sm text-white transition-all bg-blue-700 rounded-lg hover:bg-blue-800"
                                 >
-                                    {t("button.create")}
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="w-4 h-4"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                </button>
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                            {t("button.loading")}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {t("button.create")}
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="w-4 h-4"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </>
+                                    )}
+                                </Button>
                             </form>
                         </div>
                     </div>
@@ -507,5 +591,4 @@ const SignupForm = () => {
         </div>
     );
 };
-
 export default SignupForm;

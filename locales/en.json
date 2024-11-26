@@ -24,6 +24,16 @@
         "dashboard": "Dashboard",
         "profile": "Profile"
     },
+    "sidebar": {
+        "manage": "Manage",
+        "dashboard": "Dashboard",
+        "myclasses": "My Classes",
+        "profile": "Profile",
+        "settings": "Settings",
+        "logout": "Logout",
+        "footer1": "@ App name 2021",
+        "footer2": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut."
+    },
     "signup": {
         "create_account": "Create Your Account",
         "join_community": "Join our community of professional educators",
@@ -52,7 +62,9 @@
             "description_placeholder": "Tell us about your teaching experience..."
         },
         "button": {
-            "create": "Create Account"
+            "create": "Create Account",
+            "update": "Update Account",
+            "loading": "Loading"
         },
         "validation": {
             "required": "This field is required",
@@ -68,6 +80,10 @@
             "select_language": "Select at least one language",
             "select_category": "Select at least one category",
             "description_length": "Description must be at least 20 characters"
+        },
+        "messages": {
+            "error_professor_register": "Error registering professor",
+            "create_prof_success": "Professor account created successfully"
         }
     }
 }

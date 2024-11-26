@@ -5,6 +5,7 @@ import { useSidebar } from '@/hooks/useSidebar';
 import { cn } from '@/lib/utils';
 import Logo2 from '@/public/logo.png';
 import Logo from '@/public/logo.png';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 type SidebarProps = {
@@ -13,6 +14,8 @@ type SidebarProps = {
 
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized } = useSidebar();
+  const t = useTranslations('sidebar');
+
 
   return (
     <nav
@@ -36,11 +39,9 @@ export default function Sidebar({ className }: SidebarProps) {
           </div>
         </div>
         <div className={`px-4 border-t  ${!isMinimized ? 'block transition-all duration-100' : 'hidden transition-all duration-100'} `}>
-          <h3 className='py-2 text-sm'>@ App name 2021</h3>
+          <h3 className='py-2 text-sm'>{t('footer1')}</h3>
           <p className='text-[11px] pb-2'>
-            Lorem ipsum dolor sit amet, consectetur
-            adipiscing elit, sed do eiusmod tempor
-            incididunt ut.
+            {t('footer2')}
           </p>
         </div>
       </div>

@@ -1,9 +1,13 @@
+/* eslint-disable no-console */
 // slices/authSlice.ts
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { apiClient } from '@/app/lib/axios';
+import { apiClient, ApiResponse } from '@/app/lib/axios';
 import endpoints from '@/app/lib/endpoints';
 import Cookies from 'js-cookie';
 import { RootState } from '../store';
+import { TransformedData } from '@/app/[locale]/signup/page';
+import axios from 'axios';
+import { toast } from 'sonner';
 
 // Types
 export interface LoginCredentials {
@@ -29,7 +33,7 @@ export interface AuthState {
   user: ProfessorData | null;
   token: string | null;
   isLoading: boolean;
-  error: string | null;
+  error: null | string;
 }
 
 // Initial state
@@ -85,6 +89,34 @@ export const loginProfessor = createAsyncThunk<
   }
 });
 
+interface RegisterResponse {
+  token: string;
+}
+
+export const registerProf = createAsyncThunk<
+  ApiResponse<RegisterResponse>,
+  TransformedData,
+  { rejectValue: string }
+>('auth/registerProf', async (data: TransformedData, { rejectWithValue }) => {
+  try {
+    const response = await apiClient.post<RegisterResponse>(
+      endpoints.authProf.register,
+      data
+    );
+    Cookies.set('token', response.data.token, {
+      expires: 7, // 7 days
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    });
+    return response;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      return rejectWithValue(error.response?.data?.errors || 'Register failed');
+    }
+    return rejectWithValue('Register failed');
+  }
+});
+
 export const logout = createAsyncThunk('auth/logout', async () => {
   try {
     await apiClient.post(endpoints.authProf.logout, {});
@@ -136,6 +168,19 @@ const authSlice = createSlice({
       .addCase(logout.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message || 'Logout failed';
+      })
+      // Register cases
+      .addCase(registerProf.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(registerProf.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(registerProf.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = 'error_professor_register';
       })
       // Initialize cases
       .addCase(initializeAuth.pending, (state) => {

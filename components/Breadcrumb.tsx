@@ -19,7 +19,7 @@ type Props = {
 export default function Breadcrumb({ }: Props) {
     const breadcrumbItems = useBreadcrumb({});
     return (
-        <BreadcrumbContainer className="hidden md:flex">
+        <BreadcrumbContainer className="hidden md:flex md:py-2">
             <BreadcrumbList>
                 {breadcrumbItems.map((item, index) => (
                     <React.Fragment key={index}>
