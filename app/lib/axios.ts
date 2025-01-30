@@ -7,11 +7,11 @@ const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-    'Access-Control-Allow-Headers':
-      'Content-Type, Authorization, X-Requested-With'
+    'Access-Control-Allow-Methods': ['GET', 'POST', 'PUT', 'DELETE'],
+    'Access-Control-Allow-Headers': '*',
+    'Content-Type': 'application/json;',
+    Accept: 'application/json'
   },
   timeout: 10000 // 10 seconds
 });
@@ -63,5 +63,4 @@ export const apiClient = {
   delete: <T>(url: string) =>
     api.delete<ApiResponse<T>>(url).then((response) => response.data)
 };
-
 export default api;

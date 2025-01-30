@@ -4,8 +4,8 @@ import './globals.css';
 import { ReduxProvider } from './store/ReduxProvider';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
+import { ToastContainer } from 'react-toastify';
 const inter = Inter({ subsets: ['latin'] });
-import { Toaster } from "@/components/ui/sonner"
 export const metadata: Metadata = {
   title: 'Losstad',
   description: 'Losstad is a platform where you can find your instructor.',
@@ -31,7 +31,7 @@ export default async function RootLayout({
           <NextIntlClientProvider messages={messages}>
             <main>
               {children}
-              <Toaster position='bottom-left' />
+              <ToastContainer />
             </main>
           </NextIntlClientProvider>
         </ReduxProvider>

@@ -1,24 +1,11 @@
+/* eslint-disable no-console */
 
 // types/class.ts
+
 'use client';
-export interface ClassFormData {
-    title: string | undefined;
-    city: string;
-    country: string;
-    categories: string[];
-    targetedAgeMin: number;
-    targetedAgeMax: number;
-    level: string;
-    description: string;
-    format: string[];
-    availability: {
-        day: string;
-        hour: string;
-    }[];
-}
 
 // components/ClassCreationForm.tsx
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
@@ -40,37 +27,45 @@ import {
     CardDescription,
     CardContent,
 } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import HourlySlotSelector from './TimeSlotShedular';
+import { useAppDispatch, useAppSelector } from '@/app/store/reduxHooks';
+import { RootState } from '@/app/store/store';
+import { Category, fetchCategories } from '@/app/store/features/categorySlice';
+import { useEffect } from 'react';
+
+import { createClass, resetSuccess, selectError, selectIsLoading, selectSuccess } from '@/app/store/features/classSlice';
+import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+import { toast } from 'react-toastify';
+
+
 
 
 const formSchema = z.object({
     title: z.string().min(3, 'Title must be at least 3 characters'),
     city: z.string().min(2, 'Please enter a valid city'),
-    country: z.string().min(2, 'Please enter a valid country'),
-    categories: z.array(z.string()).min(1, 'Select at least one category'),
-    targetedAgeMin: z.number().min(0).max(100),
-    targetedAgeMax: z.number().min(0).max(100),
-    level: z.string(),
+    country: z.string().min(1, "Please select a country"),
+    category_id: z.string().min(1, 'Select at least one category'),
+    currency: z.string().min(1, 'Select a currency'),
+    price: z.number().min(1, 'Price must be greater than 0'),
+    min_age: z.number().min(4).max(100),
+    max_age: z.number().min(4).max(100),
+    level: z.array(z.string()).min(1, 'Select at least one level'),
     languages: z.array(z.string()).min(1, 'Select at least one language'),
     description: z.string().min(20, 'Description must be at least 20 characters'),
     format: z.string(),
-    availability: z.array(z.object({
+    availabilities: z.array(z.object({
         day: z.string(),
         hour: z.string()
     })).min(1, 'Select at least one time slot'),
-});
-
-const categories = [
-    'Art & Craft',
-    'Music',
-    'Dance',
-    'Sports',
-    'Languages',
-    'Academics',
-    'Technology',
-    'Cooking',
-];
+}).refine(
+    (data) => data.max_age > data.min_age,
+    {
+        message: "Maximum age must be greater than minimum age",
+        path: ["max_age"]
+    }
+);
 
 const days = [
     'Monday',
@@ -84,7 +79,6 @@ const days = [
 
 type Option = { label: string; value: string };
 
-// ... in the component ...
 const levelOptions: Option[] = [
     { label: 'Beginner', value: 'beginner' },
     { label: 'Intermediate', value: 'intermediate' },
@@ -97,14 +91,34 @@ const formatOptions: Option[] = [
     { label: 'Hybrid', value: 'hybrid' }
 ];
 
+const currencyOptions: Option[] =
+    [
+        {
+            label: 'Dirham',
+            value: 'dh'
+        },
+        {
+            label: 'Dollar',
+            value: 'usd'
+        },
+        {
+            label: 'Euro',
+            value: 'eur'
+        }
+    ]
+
 
 export function ClassCreationForm() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             title: '',
-            categories: [],
-            availability: days.flatMap(day =>
+            category_id: '',
+            city: '',
+            country: '',
+            min_age: undefined,
+            max_age: undefined,
+            availabilities: days.flatMap(day =>
                 Array.from({ length: 17 }, (_, i) => ({
                     day,
                     hour: String(i + 8)
@@ -113,14 +127,49 @@ export function ClassCreationForm() {
         },
     });
 
+    const router = useRouter();
+    const dispatch = useAppDispatch();
+
+    // Add these selectors
+    const isLoading = useAppSelector(selectIsLoading);
+    const success = useAppSelector(selectSuccess);
+    const error = useAppSelector(selectError);
+
+    const { categories } = useAppSelector((state: RootState) => state.category);
+
+    const categoryOptions = categories.map((category: Category) => ({
+        label: category.name,
+        value: category.id ? String(category.id) : ''
+    }));
+
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        console.log('Form data:', data);
         try {
-            console.log('Form data:', data);
-            // Add your API call here
+            dispatch(createClass(data));
         } catch (error) {
             console.error('Error submitting form:', error);
         }
     };
+
+
+    useEffect(() => {
+        dispatch(fetchCategories());
+    }, [dispatch]);
+
+    // Handle success and error states
+    useEffect(() => {
+        if (success) {
+            toast.success('Class created succefully', {
+                position: 'top-right',
+                autoClose: 3000
+            });
+            dispatch(resetSuccess());
+            router.push('/dashboard/my-classes'); // Navigate to home page
+        }
+        if (error) {
+            toast.error(error || 'Couldn\'t create your class', { autoClose: 3000, position: 'bottom-right' });
+        }
+    }, [success, error, router, dispatch]);
 
     return (
         <Card className="w-full py-4 mx-auto my-2">
@@ -143,7 +192,9 @@ export function ClassCreationForm() {
                                     <FormControl>
                                         <Input placeholder="Enter class title" {...field} />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage>
+                                        {form.formState.errors.title?.message}
+                                    </FormMessage>
                                 </FormItem>
                             )}
                         />
@@ -156,13 +207,24 @@ export function ClassCreationForm() {
                                     <FormItem>
                                         <FormLabel>Country</FormLabel>
                                         <Select
-                                            options={[{ label: 'India', value: 'India' }, { label: 'USA', value: 'USA' }] as any}
-                                            value={field.value}
-                                            onChange={(value) => field.onChange(value)}
+                                            {...field}
+                                            options={[
+                                                {
+                                                    label: 'Morroco',
+                                                    value: 'morroco'
+                                                }
+                                            ] as any}
+                                            onChange={(option) => field.onChange(option?.value)}
+                                            value={{
+                                                label: 'Morroco',
+                                                value: 'morroco'
+                                            }}
                                             className="text-sm"
                                             placeholder={'Select country'}
                                         />
-                                        <FormMessage />
+                                        <FormMessage>
+                                            {form.formState.errors.country?.message}
+                                        </FormMessage>
                                     </FormItem>
                                 )}
                             />
@@ -175,35 +237,32 @@ export function ClassCreationForm() {
                                         <FormControl>
                                             <Input placeholder="Enter city" {...field} />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage>
+                                            {form.formState.errors.city?.message}
+                                        </FormMessage>
                                     </FormItem>
                                 )}
                             />
 
                         </div>
 
-                        {/* Categories */}
+                        {/* Category */}
                         <Controller
                             control={form.control}
-                            name="categories"
+                            name="category_id"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Categories</FormLabel>
+                                    <FormLabel>Category</FormLabel>
                                     <Select
-                                        isMulti
-                                        options={[
-                                            { label: 'Music', value: 'music' },
-                                            { label: 'Art', value: 'art' },
-                                            { label: 'Dance', value: 'dance' },
-                                            { label: 'Sports', value: 'sports' },
-                                            { label: 'Academics', value: 'academics' }
-                                        ]}
-                                        value={field.value?.map((cat: string) => ({ label: cat, value: cat }))}
-                                        onChange={(values) => field.onChange(values.map((v: any) => v.value))}
+                                        options={categoryOptions}
+                                        value={categoryOptions.find(option => option.value == field.value)}
+                                        onChange={(value) => { field.onChange(value?.value) }}
                                         className="text-sm"
-                                        placeholder="Select categories"
+                                        placeholder="Select Category"
                                     />
-                                    <FormMessage />
+                                    <FormMessage>
+                                        {form.formState.errors.category_id?.message}
+                                    </FormMessage>
                                 </FormItem>
                             )}
                         />
@@ -226,9 +285,11 @@ export function ClassCreationForm() {
                                         value={field.value?.map((cat: string) => ({ label: cat, value: cat }))}
                                         onChange={(values) => field.onChange(values.map((v: any) => v.value))}
                                         className="text-sm"
-                                        placeholder="Select categories"
+                                        placeholder="Select Category"
                                     />
-                                    <FormMessage />
+                                    <FormMessage>
+                                        {form.formState.errors.languages?.message}
+                                    </FormMessage>
                                 </FormItem>
                             )}
                         />
@@ -237,7 +298,7 @@ export function ClassCreationForm() {
                         <div className="grid grid-cols-2 gap-4">
                             <Controller
                                 control={form.control}
-                                name="targetedAgeMin"
+                                name="min_age"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Minimum Age</FormLabel>
@@ -246,29 +307,35 @@ export function ClassCreationForm() {
                                                 type="number"
                                                 placeholder="Minimum age"
                                                 {...field}
-                                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                                value={field.value || ''}
+                                                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : '')}
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage>
+                                            {form.formState.errors.min_age?.message}
+                                        </FormMessage>
                                     </FormItem>
                                 )}
                             />
 
                             <Controller
                                 control={form.control}
-                                name="targetedAgeMax"
+                                name="max_age"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Maximum Age</FormLabel>
                                         <FormControl>
                                             <Input
+                                                {...field}
                                                 type="number"
                                                 placeholder="Maximum age"
-                                                {...field}
-                                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                                value={field.value || ''}
+                                                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : '')}
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage>
+                                            {form.formState.errors.max_age?.message}
+                                        </FormMessage>
                                     </FormItem>
                                 )}
                             />
@@ -283,14 +350,17 @@ export function ClassCreationForm() {
                                     <FormLabel>Class Level</FormLabel>
                                     <Select
                                         {...field}
+                                        isMulti
                                         options={levelOptions}
-                                        value={levelOptions.find(option => option.value === field.value)}
-                                        onChange={(value) => field.onChange(value?.value)}
+                                        value={levelOptions.filter(option => field.value?.includes(option.value))}
+                                        onChange={(values) => field.onChange(values.map((v: any) => v.value))}
                                         placeholder="Select level"
                                         isClearable={false}
                                         className="react-select"
                                     />
-                                    <FormMessage />
+                                    <FormMessage>
+                                        {form.formState.errors.level?.message}
+                                    </FormMessage>
                                 </FormItem>
                             )}
                         />
@@ -309,7 +379,9 @@ export function ClassCreationForm() {
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage>
+                                        {form.formState.errors.description?.message}
+                                    </FormMessage>
                                 </FormItem>
                             )}
                         />
@@ -332,7 +404,9 @@ export function ClassCreationForm() {
                                             className="react-select"
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage>
+                                        {form.formState.errors.format?.message}
+                                    </FormMessage>
                                 </FormItem>
                             )}
                         />
@@ -341,7 +415,7 @@ export function ClassCreationForm() {
                         <div className="space-y-4">
                             <Controller
                                 control={form.control}
-                                name="availability"
+                                name="availabilities"
                                 render={({ field }) => (
                                     <FormItem className="space-y-1">
                                         <FormLabel>Select your available time slots</FormLabel>
@@ -352,15 +426,70 @@ export function ClassCreationForm() {
                                             />
                                         </FormControl>
                                         <FormDescription>
-                                            Click on the slots to select your available hours
+                                            Click on the slots to remove unavailable hours
                                         </FormDescription>
-                                        <FormMessage />
+                                        <FormMessage>
+                                            {form.formState.errors.availabilities?.message}
+                                        </FormMessage>
                                     </FormItem>
                                 )}
                             />
                         </div>
+                        {/* Price */}
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <Controller
+                                control={form.control}
+                                name="currency"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Currency</FormLabel>
+                                        <Select
+                                            {...field}
+                                            options={currencyOptions}
+                                            onChange={(option) => field.onChange(option?.value)}
+                                            value={currencyOptions.find(option => option.value === field.value)}
+                                            className="text-sm"
+                                            placeholder={'Select currency'}
+                                        />
+                                        <FormMessage>
+                                            {form.formState.errors.currency?.message}
+                                        </FormMessage>
+                                    </FormItem>
+                                )}
+                            />
+                            <Controller
+                                control={form.control}
+                                name="price"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Price per (60 min)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                type='number'
+                                                placeholder="Enter price"
+                                                value={field.value || ''}
+                                                onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : '')}
+                                            />
+                                        </FormControl>
+                                        <FormMessage>
+                                            {form.formState.errors.price?.message}
+                                        </FormMessage>
+                                    </FormItem>
+                                )}
+                            />
+
+                        </div>
                         <Button type="submit" className="w-full">
-                            Create Class
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Please wait
+                                </>
+                            ) : (
+                                "Create Class"
+                            )}
                         </Button>
                     </form>
                 </Form>
