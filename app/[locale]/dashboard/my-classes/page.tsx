@@ -1,15 +1,26 @@
 'use client'
 
-import { CalassesTable } from '@/components/tables/classes/ClassesTable'
+import { fetchCourses } from '@/app/store/features/classSlice'
+import { useAppDispatch, useAppSelector } from '@/app/store/reduxHooks'
+import { CalassesTable } from '@/components/dashboard/classes/ClassesTable'
 import { Button } from '@/components/ui/button'
 import { useRouter } from '@/i18n/routing'
-import React from 'react'
+import { useEffect } from 'react'
 
 type Props = {}
 
 function Page({ }: Props) {
 
     const router = useRouter()
+    const dispatch = useAppDispatch()
+
+    const { courses, isLoading, error } = useAppSelector((state) => state.course)
+
+
+
+    useEffect(() => {
+        dispatch(fetchCourses())
+    }, [])
     return (
         <div className='px-4 py-4 mt-4 bg-white rounded-sm'>
             <div className='flex justify-between'>
@@ -18,7 +29,10 @@ function Page({ }: Props) {
                     Create Class
                 </Button>
             </div>
-            <CalassesTable />
+            <CalassesTable
+                data={courses}
+                isLoading={isLoading}
+            />
         </div>
     )
 }

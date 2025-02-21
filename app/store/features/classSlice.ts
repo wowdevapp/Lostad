@@ -33,6 +33,18 @@ export const createClass = createAsyncThunk(
   }
 );
 
+export const fetchCourses = createAsyncThunk(
+  'course/fetchCourses',
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await apiClient.get(endpoints.course.fetch);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 export const classSlice = createSlice({
   name: 'course',
   initialState,
@@ -43,16 +55,18 @@ export const classSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    /* builder.addCase(fetchCourses.pending, (state) => {
+    //fetch courses
+    builder.addCase(fetchCourses.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(fetchCourses.fulfilled, (state, action) => {
+    builder.addCase(fetchCourses.fulfilled, (state, action: any) => {
       state.isLoading = false;
-      state.courses = action.payload.data;
+      state.courses = action.payload.data as Course[];
     });
     builder.addCase(fetchCourses.rejected, (state) => {
       state.isLoading = false;
-    }); */
+    });
+    //create course
     builder.addCase(createClass.pending, (state) => {
       state.isLoading = true;
       state.success = false;
